@@ -35,7 +35,8 @@ def split_text(
         List[str]: A list of text chunks.
     """
     # Split the text into sentences using multiple delimiters
-    delimiters = [".", "!", "?", "\n"]
+    #TODO: I don't trust newlines to be correctly used for new sentences (e.g. markdown, latex, many pdf parsers have new lines in random places)
+    delimiters = [".", "!", "?"]
     regex_pattern = "|".join(map(re.escape, delimiters))
     sentences = re.split(regex_pattern, text)
     
@@ -58,7 +59,8 @@ def split_text(
             
             sub_chunk = []
             sub_length = 0
-            
+
+            # TODO: merge subsentences if they are too short for a chunk (e.g. less than 50% of chunk max size)
             for sub_sentence, sub_token_count in zip(sub_sentences, sub_token_counts):
                 if sub_length + sub_token_count > max_tokens:
                     chunks.append(" ".join(sub_chunk))

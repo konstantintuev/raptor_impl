@@ -73,6 +73,10 @@ class ClusterTreeBuilder(TreeBuilder):
                 max_tokens=summarization_length,
             )
 
+            if not isinstance(node_texts, str) or not isinstance(summarized_text, str):
+                logging.info("Node or Summarized Text is not a string")
+                return
+
             logging.info(
                 f"Node Texts Length: {len(self.tokenizer.encode(node_texts))}, Summarized Text Length: {len(self.tokenizer.encode(summarized_text))}"
             )

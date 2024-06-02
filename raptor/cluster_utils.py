@@ -6,6 +6,7 @@ from typing import List, Optional
 import numpy as np
 import tiktoken
 import umap
+from sklearn.decomposition import PCA
 from sklearn.mixture import GaussianMixture
 
 # Initialize logging
@@ -28,18 +29,24 @@ def global_cluster_embeddings(
 ) -> np.ndarray:
     if n_neighbors is None:
         n_neighbors = int((len(embeddings) - 1) ** 0.5)
-    reduced_embeddings = umap.UMAP(
-        n_neighbors=n_neighbors, n_components=dim, metric=metric
-    ).fit_transform(embeddings)
+    #reduced_embeddings = umap.UMAP(
+     #   n_neighbors=n_neighbors, n_components=dim, metric=metric
+    #).fit_transform(embeddings)
+    # TODO: find better dimensionality reducer, which accounts for non-linear relationships
+    pca = PCA(n_components=dim)
+    reduced_embeddings = pca.fit_transform(embeddings)
     return reduced_embeddings
 
 
 def local_cluster_embeddings(
     embeddings: np.ndarray, dim: int, num_neighbors: int = 10, metric: str = "cosine"
 ) -> np.ndarray:
-    reduced_embeddings = umap.UMAP(
-        n_neighbors=num_neighbors, n_components=dim, metric=metric
-    ).fit_transform(embeddings)
+    #reduced_embeddings = umap.UMAP(
+     #   n_neighbors=num_neighbors, n_components=dim, metric=metric
+    #).fit_transform(embeddings)
+    # TODO: find better dimensionality reducer, which accounts for non-linear relationships
+    pca = PCA(n_components=dim)
+    reduced_embeddings = pca.fit_transform(embeddings)
     return reduced_embeddings
 
 
@@ -137,8 +144,9 @@ class RAPTOR_Clustering(ClusteringAlgorithm):
         tokenizer=tiktoken.get_encoding("cl100k_base"),
         reduction_dimension: int = 10,
         threshold: float = 0.1,
-        verbose: bool = False,
+        verbose: bool = True,
     ) -> List[List[Node]]:
+        print("run perform_clustering")
         # Get the embeddings from the nodes
         embeddings = np.array([node.embeddings[embedding_model_name] for node in nodes])
 
