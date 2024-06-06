@@ -96,6 +96,10 @@ class ClusterTreeBuilder(TreeBuilder):
 
             node_list_current_layer = get_node_list(current_level_nodes)
 
+            """
+            The main idea is that the any amount of dimensions of the embeddings can be reduced to a fixed number of dimensions.
+            If we have number of inputs (texts) less than the amount of dimensions we work with, then we cannot cluster further.
+            """
             if len(node_list_current_layer) <= self.reduction_dimension + 1:
                 self.num_layers = layer
                 logging.info(

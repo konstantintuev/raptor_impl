@@ -185,7 +185,7 @@ def get_text(node_list: List[Node]) -> str:
     for node in node_list:
         text += f"{' '.join(node.text.splitlines())}"
         text += "\n\n"
-    return text
+    return text.strip()
 
 
 def indices_of_nearest_neighbors_from_distances(distances: List[float]) -> np.ndarray:

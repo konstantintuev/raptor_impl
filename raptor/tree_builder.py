@@ -294,6 +294,45 @@ class TreeBuilder:
 
         return tree
 
+    def build_from_semantic_chapters(self, texts: List[str]) -> Tree:
+        """Builds a golden tree from the input text, optionally using multithreading.
+
+        Args:
+            text (str): The input text.
+            use_multithreading (bool, optional): Whether to use multithreading when creating leaf nodes.
+                Default: True.
+
+        Returns:
+            Tree: The golden tree structure.
+        """
+
+        leaf_nodes = {}
+        model_name, model = next(iter(self.embedding_models.items()))
+
+        embedding_lists = model.create_embeddings(texts)
+        for index, text in enumerate(texts):
+            embeddings = {
+                model_name: embedding_lists[index]
+            }
+            node = Node(text, index, set(), embeddings)
+            leaf_nodes[index] = node
+
+        logging.info("Creating Leaf Nodes")
+
+        layer_to_nodes = {0: list(leaf_nodes.values())}
+
+        logging.info(f"Created {len(leaf_nodes)} Leaf Embeddings")
+
+        logging.info("Building All Nodes")
+
+        all_nodes = copy.deepcopy(leaf_nodes)
+
+        root_nodes = self.construct_tree(all_nodes, all_nodes, layer_to_nodes)
+
+        tree = Tree(all_nodes, root_nodes, leaf_nodes, self.num_layers, layer_to_nodes)
+
+        return tree
+
     @abstractclassmethod
     def construct_tree(
         self,

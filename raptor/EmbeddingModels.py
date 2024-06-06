@@ -1,5 +1,6 @@
 import logging
 from abc import ABC, abstractmethod
+from typing import List
 
 from openai import OpenAI
 from sentence_transformers import SentenceTransformer
@@ -10,7 +11,11 @@ logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.INFO)
 
 class BaseEmbeddingModel(ABC):
     @abstractmethod
-    def create_embedding(self, text):
+    def create_embedding(self, text: str):
+        pass
+
+    @abstractmethod
+    def create_embeddings(self, text: List[str]) -> List[List[float]]:
         pass
 
 
@@ -30,8 +35,11 @@ class OpenAIEmbeddingModel(BaseEmbeddingModel):
 
 
 class SBertEmbeddingModel(BaseEmbeddingModel):
-    def __init__(self, model_name="sentence-transformers/multi-qa-mpnet-base-cos-v1"):
-        self.model = SentenceTransformer(model_name)
+    def __init__(self, model_name="sentence-transformers/multi-qa-mpnet-base-cos-v1", device="cpu"):
+        self.model = SentenceTransformer(model_name, device=device)
 
     def create_embedding(self, text):
         return self.model.encode(text)
+
+    def create_embeddings(self, text: List[str]) -> List[List[float]]:
+        return self.model.encode(text, convert_to_tensor=False).tolist()

@@ -1,5 +1,6 @@
 import logging
 import pickle
+from typing import List
 
 from .cluster_tree_builder import ClusterTreeBuilder, ClusterTreeConfig
 from .EmbeddingModels import BaseEmbeddingModel
@@ -217,6 +218,18 @@ class RetrievalAugmentation:
                 return
 
         self.tree = self.tree_builder.build_from_text(text=docs)
+        self.retriever = TreeRetriever(self.tree_retriever_config, self.tree)
+
+    def add_semantic_chapters(self, texts: List[str]):
+        if self.tree is not None:
+            user_input = input(
+                "Warning: Overwriting existing tree. Did you mean to call 'add_to_existing' instead? (y/n): "
+            )
+            if user_input.lower() == "y":
+                # self.add_to_existing(docs)
+                return
+
+        self.tree = self.tree_builder.build_from_semantic_chapters(texts)
         self.retriever = TreeRetriever(self.tree_retriever_config, self.tree)
 
     def retrieve(
