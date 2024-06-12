@@ -2,13 +2,12 @@ import logging
 import pickle
 from typing import List
 
-from .cluster_tree_builder import ClusterTreeBuilder, ClusterTreeConfig
 from .EmbeddingModels import BaseEmbeddingModel
 from .QAModels import BaseQAModel, GPT3TurboQAModel
 from .SummarizationModels import BaseSummarizationModel
-from .tree_builder import TreeBuilder, TreeBuilderConfig
+from .cluster_tree_builder import ClusterTreeBuilder, ClusterTreeConfig
 from .tree_retriever import TreeRetriever, TreeRetrieverConfig
-from .tree_structures import Node, Tree
+from .tree_structures import Tree
 
 # Define a dictionary to map supported tree builders to their respective configs
 supported_tree_builders = {"cluster": (ClusterTreeBuilder, ClusterTreeConfig)}
@@ -220,7 +219,7 @@ class RetrievalAugmentation:
         self.tree = self.tree_builder.build_from_text(text=docs)
         self.retriever = TreeRetriever(self.tree_retriever_config, self.tree)
 
-    def add_semantic_chapters(self, texts: List[str]):
+    def add_semantic_chapters(self, texts: List[str], strip_uuids: bool = True):
         if self.tree is not None:
             user_input = input(
                 "Warning: Overwriting existing tree. Did you mean to call 'add_to_existing' instead? (y/n): "
@@ -229,7 +228,7 @@ class RetrievalAugmentation:
                 # self.add_to_existing(docs)
                 return
 
-        self.tree = self.tree_builder.build_from_semantic_chapters(texts)
+        self.tree = self.tree_builder.build_from_semantic_chapters(texts, strip_uuids)
         self.retriever = TreeRetriever(self.tree_retriever_config, self.tree)
 
     def retrieve(

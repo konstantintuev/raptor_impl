@@ -1,6 +1,7 @@
 import copy
 import logging
 import os
+import re
 from abc import abstractclassmethod
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from threading import Lock
@@ -10,6 +11,7 @@ import openai
 import tiktoken
 from tenacity import retry, stop_after_attempt, wait_random_exponential
 
+from file_processing.document_processor.semantic_text_splitter import uuid_pattern
 from .EmbeddingModels import BaseEmbeddingModel, OpenAIEmbeddingModel
 from .SummarizationModels import (BaseSummarizationModel,
                                   GPT3TurboSummarizationModel)
@@ -294,7 +296,7 @@ class TreeBuilder:
 
         return tree
 
-    def build_from_semantic_chapters(self, texts: List[str]) -> Tree:
+    def build_from_semantic_chapters(self, texts: List[str], strip_uuids: bool) -> Tree:
         """Builds a golden tree from the input text, optionally using multithreading.
 
         Args:
@@ -309,7 +311,11 @@ class TreeBuilder:
         leaf_nodes = {}
         model_name, model = next(iter(self.embedding_models.items()))
 
-        embedding_lists = model.create_embeddings(texts)
+        embedding_lists = model.create_embeddings(texts=[
+            # Remove all UUIDs from the embedded text -> reduce noise
+            re.sub(uuid_pattern, '', text)
+            for text in texts
+        ] if strip_uuids else texts)
         for index, text in enumerate(texts):
             embeddings = {
                 model_name: embedding_lists[index]
