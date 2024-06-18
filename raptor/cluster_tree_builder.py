@@ -96,23 +96,28 @@ class ClusterTreeBuilder(TreeBuilder):
 
             node_list_current_layer = get_node_list(current_level_nodes)
 
-            """
-            The main idea is that the any amount of dimensions of the embeddings can be reduced to a fixed number of dimensions.
-            If we have number of inputs (texts) less than the amount of dimensions we work with, then we cannot cluster further.
-            """
-            if len(node_list_current_layer) <= self.reduction_dimension + 1:
+            if len(node_list_current_layer) <= 1:
+                # final high level summary
                 self.num_layers = layer
                 logging.info(
                     f"Stopping Layer construction: Cannot Create More Layers. Total Layers in tree: {layer}"
                 )
                 break
 
-            clusters = self.clustering_algorithm.perform_clustering(
-                node_list_current_layer,
-                self.cluster_embedding_model,
-                reduction_dimension=self.reduction_dimension,
-                **self.clustering_params,
-            )
+            """
+            The main idea is that the any amount of dimensions of the embeddings can be reduced to a fixed number of dimensions.
+            If we have number of inputs (texts) less than the amount of dimensions we work with, then we cannot cluster further.
+            """
+            if len(node_list_current_layer) <= self.reduction_dimension + 1:
+                # final high level summary -> all in a single cluster
+                clusters = [node_list_current_layer]
+            else:
+                clusters = self.clustering_algorithm.perform_clustering(
+                    node_list_current_layer,
+                    self.cluster_embedding_model,
+                    reduction_dimension=self.reduction_dimension,
+                    **self.clustering_params,
+                )
 
             lock = Lock()
 
