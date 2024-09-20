@@ -8,7 +8,7 @@ from scipy import spatial
 
 from .tree_structures import Node
 
-logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.INFO)
+logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.ERROR)
 
 
 def reverse_mapping(layer_to_nodes: Dict[int, List[Node]]) -> Dict[Node, int]:

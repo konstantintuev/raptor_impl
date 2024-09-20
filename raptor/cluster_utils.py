@@ -10,7 +10,7 @@ from sklearn.decomposition import PCA
 from sklearn.mixture import GaussianMixture
 
 # Initialize logging
-logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.INFO)
+logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.ERROR)
 
 from .tree_structures import Node
 # Import necessary methods from other modules

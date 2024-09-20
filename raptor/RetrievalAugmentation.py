@@ -12,7 +12,7 @@ from .tree_structures import Tree
 # Define a dictionary to map supported tree builders to their respective configs
 supported_tree_builders = {"cluster": (ClusterTreeBuilder, ClusterTreeConfig)}
 
-logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.INFO)
+logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.ERROR)
 
 
 class RetrievalAugmentationConfig:
@@ -197,7 +197,7 @@ class RetrievalAugmentation:
         else:
             self.retriever = None
 
-        logging.info(
+        logging.debug(
             f"Successfully initialized RetrievalAugmentation with Config {config.log_config()}"
         )
 

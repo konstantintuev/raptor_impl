@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from openai import OpenAI
 from tenacity import retry, stop_after_attempt, wait_random_exponential
 
-logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.INFO)
+logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.ERROR)
 
 
 class BaseSummarizationModel(ABC):

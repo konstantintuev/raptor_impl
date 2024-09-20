@@ -6,7 +6,7 @@ from openai import OpenAI
 from sentence_transformers import SentenceTransformer
 from tenacity import retry, stop_after_attempt, wait_random_exponential
 
-logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.INFO)
+logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.ERROR)
 
 
 class BaseEmbeddingModel(ABC):
